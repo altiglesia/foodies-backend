@@ -113,7 +113,8 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/users/:id/faves" do
-    favorites = User.find(params[:id]).reviews.select { |review| review.favorited? == true }.map { |restaurant| Restaurant.find(restaurant.restaurant_id) }
+    # favorites = User.find(params[:id]).reviews.select { |review| review.favorited? == true }.map { |restaurant| Restaurant.find(restaurant.restaurant_id) }
+    favorites = User.find(params[:id]).reviews.group(:restaurant_id).select { |review| review.favorited? == true }.map { |restaurant| Restaurant.find(restaurant.restaurant_id) }
     completed_favorites = []
     favorites.map do |f|
       favorite = f.attributes
