@@ -16,7 +16,7 @@ class Restaurant < ActiveRecord::Base
             {"restaurant_id" => r.id, "distance" => distance}
         end
         
-        dist_array.sort_by {|h| h["distance"]}[0...100].map{|h| Restaurant.find(h["restaurant_id"])}
+        dist_array.sort_by {|h| h["distance"]}[0...50].map{|h| Restaurant.find(h["restaurant_id"])}
 
     end
 end
