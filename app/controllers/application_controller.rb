@@ -55,7 +55,8 @@ class ApplicationController < Sinatra::Base
       Review.where(user_id: params[:user_id], restaurant_id: params[:id]).last.update(
         likes: params[:likes],
         dislikes: params[:dislikes],
-        favorited?: params[:favorited?]
+        favorited?: params[:favorited?],
+        review_detail_comment: params[:review_detail_comment]
       )
       restaurant_review = Review.where(user_id: params[:user_id], restaurant_id: params[:id]).last
     else 
