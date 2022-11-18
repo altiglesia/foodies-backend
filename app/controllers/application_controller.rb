@@ -51,28 +51,37 @@ class ApplicationController < Sinatra::Base
   end
 
   post "/restaurant/:id/reviews" do
-    restaurant_review = Review.create(
-      likes: params[:likes],
-      dislikes: params[:dislikes],
-      favorited?: params[:favorited?],
-      restaurant_id: params[:restaurant_id],
-      user_id: params[:user_id],
-      review_detail_comment: params[:review_detail_comment]
-    )
+    if Review.where(user_id: params[:user_id], restaurant_id: params[:id]).length > 0
+      Review.where(user_id: params[:user_id], restaurant_id: params[:id]).last.update(
+        likes: params[:likes],
+        dislikes: params[:dislikes],
+        favorited?: params[:favorited?]
+      )
+      restaurant_review = Review.where(user_id: params[:user_id], restaurant_id: params[:id]).last
+    else 
+      restaurant_review = Review.create(
+        likes: params[:likes],
+        dislikes: params[:dislikes],
+        favorited?: params[:favorited?],
+        restaurant_id: params[:id],
+        user_id: params[:user_id],
+        review_detail_comment: params[:review_detail_comment]
+        )
+    end
     restaurant_review.to_json
   end
 
-  patch "/reviews" do
-    user = params[:user]
-    restaurant = params[:restaurant]
-    restaurant_review = Review.where(user_id: user, restaurant_id: restaurant)
-    restaurant_review.update(
-      likes: params[:likes],
-      dislikes: params[:dislikes],
-      favorited?: params[:favorited?]
-    )
-    restaurant_review.to_json
-  end
+  # patch "/reviews" do
+  #   user = params[:user]
+  #   restaurant = params[:restaurant]
+  #   restaurant_review = Review.where(user_id: user, restaurant_id: restaurant)
+  #   restaurant_review.update(
+  #     likes: params[:likes],
+  #     dislikes: params[:dislikes],
+  #     favorited?: params[:favorited?]
+  #   )
+  #   restaurant_review.to_json
+  # end
 
   get "/reviews" do 
     user = params[:user]
