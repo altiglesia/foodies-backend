@@ -62,14 +62,14 @@ class ApplicationController < Sinatra::Base
     restaurant_review.to_json
   end
 
-
   patch "/reviews" do
     user = params[:user]
     restaurant = params[:restaurant]
     restaurant_review = Review.where(user_id: user, restaurant_id: restaurant)
     restaurant_review.update(
       likes: params[:likes],
-      dislikes: params[:dislikes]
+      dislikes: params[:dislikes],
+      favorited?: params[:favorited?]
     )
     restaurant_review.to_json
   end
@@ -114,7 +114,13 @@ class ApplicationController < Sinatra::Base
 
   get "/users/:id/faves" do
     favorites = User.find(params[:id]).reviews.select { |review| review.favorited? == true }.map { |restaurant| Restaurant.find(restaurant.restaurant_id) }
-    favorites.to_json
+    completed_favorites = []
+    favorites.map do |f|
+      favorite = f.attributes
+      .merge!(images: f.restaurant_images.map{|url_obj| url_obj.image_url})
+      completed_favorites << favorite
+    end
+    completed_favorites.to_json
   end
 
   post "/users/new" do
