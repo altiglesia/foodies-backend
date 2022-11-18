@@ -112,6 +112,11 @@ class ApplicationController < Sinatra::Base
     user_followers.to_json
   end
 
+  get "/users/:id/faves" do
+    favorites = User.find(params[:id]).reviews.select { |review| review.favorited? == true }.map { |restaurant| Restaurant.find(restaurant.restaurant_id) }
+    favorites.to_json
+  end
+
   post "/users/new" do
     new_user = User.create(
       username: params[:uname],
